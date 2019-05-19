@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+#Belady{
+	top: 220px;
+	left: 50px;
+	position: absolute;
+}
+#Recent{
+	top: 220px;
+	left: 250px;
+	position: absolute;
+}
+#Frequent{
+	top: 220px;
+	left: 450px;
+	position: absolute;
+}
+tr, th { 
+	border: solid 1px black;
+	text-align: center;
+	padding: 20px;
+}
+</style>
+<body>
+{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+			<br>
+			<div class=flashes>
+			{% for category, message in messages %}
+				<div class="{{ category }}" style="font-weight: bold; padding: 20px;">{{ message }}</div>
+			{% endfor %}
+			</div>
+		{% endif %}
+	{% endwith %}
+	<p>Statistics for: {{ reference_list }}</p>
+	<table id="Belady">
+		<th>Belady's Algorithm</th>
+		{% for stats in bstats %}
+			<tr><td>{{ stats }} </td></tr>
+		{% endfor %}
+		<tr><td><b>Total faults:</b> {{ bfaults }}</td></tr>
+	</table>
+	
+	<table id="Recent">
+		<th>Least Recently Used</th>
+		{% for stats in rstats %}
+			<tr><td>{{ stats }} </td></tr>
+		{% endfor %}
+		<tr><td><b>Total faults:</b> {{ rfaults }}</td></tr>
+	</table>
+	
+	<table id="Frequent">
+		<th>Least Frequently Used</th>
+		{% for stats in fstats %}
+			<tr><td>{{ stats }} </td></tr>
+		{% endfor %}
+		<tr><td><b>Total faults:</b> {{ ffaults }}</td></tr>
+	</table>
+</body>
+{% endblock %}

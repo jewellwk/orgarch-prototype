@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+div {
+	text-align: center;
+}
+a:link {
+	text-decoration: none;
+}
+a:visited {
+	color: rgba(160, 160, 160, 0.5);
+	text-decoration: none;
+}
+
+a:hover {
+	color: rgba(160, 160, 160, 0.5);
+	text-decoration: none;
+}
+
+a:active {
+	color: rgba(160, 160, 160, 0.5);
+	text-decoration: none;
+}
+body {
+	font-family:Verdana;
+	color:#aaaaaa;
+}
+p {
+	text-align: right;
+}
+.cylinder {
+	top: 550px;
+	left: 610px;
+	position: absolute;
+	overflow: hidden;
+	margin: 0 auto;
+	width: 125px;
+	height: 250px;
+	border-radius: 55px/30px;
+	background-color: rgba(160, 160, 160, 0.5);
+}
+#Ref {
+	top: 200px;
+	left: 695px;
+	position: absolute;
+}
+#RepPol {
+	text-align: center;
+	top: 200px;
+	left: 1210px;
+	position: absolute;
+}
+#Data {
+	top: 400px;
+	left: 50px;
+	position: absolute;
+	
+}
+#dtd{
+	border: solid 1px;
+	width: 60px;
+}
+#TLB {
+	top: 350px;
+	left: 260px;
+	position: absolute;
+}
+#Page {
+	top: 550px;
+	left: 260px;
+	position: absolute;
+}
+#Cache {
+	top: 350px;
+	left: 610px;
+	position: absolute;
+}
+#Main {
+	top: 450px;
+	left: 880px;
+	position: absolute;
+}
+#Stats {
+	top: 400px;
+	left: 1275px;
+	position: absolute;
+}
+#Update {
+	border: solid 1px;
+	width: 60px;
+	font-color: red;
+	background-color: rgba(160, 160, 160, 0.5);
+}
+th {
+	text-align: center;
+}
+#tarrow {
+	font-size: 56px;
+	color: red;
+	top: 395px;
+	left: 530px;
+	position: absolute;
+}
+#parrow {
+	font-size: 56px;
+	color: red;
+	top: 470px;
+	left: 375px;
+	position: absolute;
+}
+#marrow {
+	font-size: 56px;
+	color: red;
+	top: 645px;
+	left: 510px;
+	position: absolute;
+}
+#darrow {
+	font-size: 56px;
+	color: red;
+	top: 580px;
+	left: 770px;
+	position: absolute;
+}
+#Description {
+	text-align: left;
+	top: 580px;
+	left: 1170px;
+	position: absolute;
+	
+}
+#Directions {
+	text-align: left;
+	left: 50px;
+	position: absolute;
+}
+</style>
+<body>
+<div class="container-fluid">
+	<div style="background-color:#e5e5e5;padding:15px;text-align:center;">
+		<H1>Virtual Memory Simulator</H1>
+	</div>
+</div>
+	<form action="" method="POST">
+	{{ form.hidden_tag() }}	
+		
+	<table id ="Data">
+	<tr><th>Logical Memory</th></tr>
+	<tr><td>Page</td></tr>
+	<tr><td id="dtd">{{ log_mem['0'] }}</td></tr>
+	<tr><td id="dtd">{{ log_mem['1'] }}</td></tr>
+	<tr><td id="dtd">{{ log_mem['2'] }}</td></tr>
+	<tr><td id="dtd">{{ log_mem['3'] }}</td></tr>
+	<tr><td id="dtd">{{ log_mem['4'] }}</td></tr>
+	<tr><td id="dtd">{{ log_mem['5'] }}</td></tr>
+	<tr><td id="dtd">{{ log_mem['6'] }}</td></tr>
+	<tr><td id="dtd">{{ log_mem['7'] }}</td></tr>
+	</table>
+	
+	<div id ="Directions">
+	<br><br>
+	<b>Directions:</b><br>
+	Enter the reference list and click  the process button.<br>
+	The simulator will process each page as the process button is clicked.
+	</div>
+	
+	
+	<p id="Ref">
+	{{ form.data.label }}<br>
+	{{ form.data(size=40) }}
+	<br><br>
+	<input id= "button" type="submit" name="button" value="Process" onclick="setTimeout(animation({{ stats[6] }}), 3000);">
+	</p>
+	
+	<p id="RepPol">
+	<b>Please select a frame replacement policy:</b><br><br>
+	<input type="radio" id="reppol" name="reppol" value="LRU" checked> LRU
+	<input type="radio" id="reppol" name="reppol" value="LFU"> LFU
+	<input type="radio" id="reppol" name="reppol" value="Belady"> Belady<br><br>
+	<input id= "button" type="submit" name="button" value="Compare Algorithms">
+	</p>
+	
+	<table id="TLB">
+	<tr><th><a id="Header" title="Description"
+	 href="#" onclick="isTLB();return false;">TLB</a></th></tr>
+	<tr><td>Initial</td><td></td><td style="color: red;">Current</td><td></td></tr>
+	<tr><td>Page</td><td>Frame</td><td>Page</td><td>Frame</td></tr>
+	<tr><td>{{ form.tlb0page(size=5) }}</td><td>{{ form.tlb0offset(size=5) }}</td><td id ="Update">{{ tlb[0] }}</td><td id ="Update">{{ tlboffset[0] }}</td></tr>
+	<tr><td>{{ form.tlb1page(size=5) }}</td><td>{{ form.tlb1offset(size=5) }}</td><td id ="Update">{{ tlb[1] }}</td><td id ="Update">{{ tlboffset[1] }}</td></tr>
+	</table>
+	
+	
+	<table id="Page">
+		<tr><th><a id="Header" title="Description"
+			 href="#" onclick="isPageTable();return false;">Page Table</a></th></tr>
+		<tr><td>Frame</td><td>Initial</td><td style="color: red;">Current</td></tr>
+		<tr><td>000</td><td>{{ form.page0frm(size=5) }}</td><td id = "Update">{{ page_table[0] }}</td></tr>
+		<tr><td>001</td><td>{{ form.page1frm(size=5) }}</td><td id = "Update">{{ page_table[1] }}</td></tr>
+		<tr><td>010</td><td>{{ form.page2frm(size=5) }}</td><td id = "Update">{{ page_table[2] }}</td></tr>
+		<tr><td>011</td><td>{{ form.page3frm(size=5) }}</td><td id = "Update">{{ page_table[3] }}</td></tr>
+		<tr><td>100</td><td>{{ form.page4frm(size=5) }}</td><td id = "Update">{{ page_table[4] }}</td></tr>
+		<tr><td>101</td><td>{{ form.page5frm(size=5) }}</td><td id = "Update">{{ page_table[5] }}</td></tr>
+		<tr><td>110</td><td>{{ form.page6frm(size=5) }}</td><td id = "Update">{{ page_table[6] }}</td></tr>
+		<tr><td>111</td><td>{{ form.page7frm(size=5) }}</td><td id = "Update">{{ page_table[7] }}</td></tr>
+	</table>
+
+	<p id = "Stats">cache hits: {{ stats[0] }}<br> 
+		cache misses: {{ stats[1] }}<br>
+		<br>
+		tlb hits: {{ stats[2] }}<br>
+		tlb misses: {{ stats[3] }}<br>
+		<br>
+		page table hits: {{ stats[4] }}<br>
+		page table misses: {{ stats[5] }}<br>
+	</p>
+	
+	<table id="Cache">
+		<tr><th><a id="Header" title="Description"
+			 href="#" onclick="isCache();return false;">Cache</a></th></tr>
+		<tr><td>Initial</td><td style="color: red;">Current</td>
+		<tr><td>{{ form.cache_0(size=5) }}</td><td id = "Update">{{ cache[0] }}</td></tr>
+		<tr><td>{{ form.cache_1(size=5) }}</td><td id = "Update">{{ cache[1] }}</td></tr>
+		<tr><td>{{ form.cache_2(size=5) }}</td><td id = "Update">{{ cache[2] }}</td></tr>
+		<tr><td>{{ form.cache_3(size=5) }}</td><td id = "Update">{{ cache[3] }}</td></tr>
+	</table>
+	
+	<table id="Main">
+	<tr><th><a id="Header" title="Description"
+			 href="#" onclick="isTLB();return false;">Main Memory</a></th></tr>
+		<tr><td>Frame</td><td>Initial</td><td style="color: red;">Current</td></tr>
+		<tr><td>0000</td><td>{{ form.frame0(size=5) }}</td><td id = "Update">{{ main_mem[0] }}</td></tr>
+		<tr><td>0001</td><td>{{ form.frame1(size=5) }}</td><td id = "Update">{{ main_mem[1] }}</td></tr>
+		<tr><td>0010</td><td>{{ form.frame2(size=5) }}</td><td id = "Update">{{ main_mem[2] }}</td></tr>
+		<tr><td>0011</td><td>{{ form.frame3(size=5) }}</td><td id = "Update">{{ main_mem[3] }}</td></tr>
+		<tr><td>0100</td><td>{{ form.frame4(size=5) }}</td><td id = "Update">{{ main_mem[4] }}</td></tr>
+		<tr><td>0101</td><td>{{ form.frame5(size=5) }}</td><td id = "Update">{{ main_mem[5] }}</td></tr>
+		<tr><td>0110</td><td>{{ form.frame6(size=5) }}</td><td id = "Update">{{ main_mem[6] }}</td></tr>
+		<tr><td>0111</td><td>{{ form.frame7(size=5) }}</td><td id = "Update">{{ main_mem[7] }}</td></tr>
+	</table></form><br>
+	
+	<div id="Disk" class="cylinder">
+	<br>
+	<a id="Header" title="Description"
+		 href="#" onclick="isTLB();return false;">Secondary Memory</a>
+	<br><br>
+	<table style="width: 100%;">
+		<tr><td>&#9633;</td><td>&#9633;</td><td>&#9633;</td></tr>
+		<tr><td>&#9633;</td><td>&#9633;</td><td>&#9633;</td></tr>
+		<tr><td>&#9633;</td><td>&#9633;</td><td>&#9633;</td></tr>
+		<tr><td>&#9633;</td><td>&#9633;</td><td>&#9633;</td></tr>
+		<tr><td>&#9633;</td><td>&#9633;</td><td>&#9633;</td></tr>
+		<tr><td>&#9633;</td><td>&#9633;</td><td>&#9633;</td></tr>
+		<tr><td>&#9633;</td><td>&#9633;</td><td>&#9633;</td></tr>
+	</table>
+	</div>
+	
+	<p id="tarrow"></p>
+	<p id="parrow"></p>
+	<p id="marrow"></p>
+	<p id="darrow"></p>
+	
+		
+	<div id="Description">
+	{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+			<br>
+			<b>Steps:</b>
+			<ol class=flashes>
+			{% for category, message in messages %}
+				<li class="{{ category }}" style="color: red;">{{ message }}</li>
+			{% endfor %}
+			</ol>
+		{% endif %}
+	{% endwith %}
+	</div>
+	
+</body>
+<script language = "JavaScript">
+function animation(animate){
+	if (animate == 0 || animate == 1){
+		document.getElementById("tarrow").innerHTML = "&larr;";
+	} else if (animate == 2){
+		document.getElementById("tarrow").innerHTML = "&larr;";
+		document.getElementById("parrow").innerHTML = "&darr;";
+	} else {
+		document.getElementById("tarrow").innerHTML = "&larr;" ;
+		document.getElementById("parrow").innerHTML = "&darr;";
+		document.getElementById("marrow").innerHTML = "&rarr;";
+		document.getElementById("darrow").innerHTML = "&rarr;";
+	}
+}
+
+function isTLB() {
+	alert("A translation lookaside buffer (TLB) is a memory cache that stores recent translations of virtual memory to physical addesses for faster retrieval.");
+}
+
+function isSecondaryMemory() {
+	alert("Secondary memory acts as storage for noncritical data that does not need to be frequently accessed. It is often refered to as a disk and can exist as a solid state drive or hard disk drive.");
+}
+
+function isPageTable() {
+	alert("A page table is a structure used for storage that dictates the translation between the virtual and physical address of a page.");
+}
+
+function isCache() {
+	alert("A cache is mechanism that acts as a temporary storage area for improving access times to main memory.");
+}
+function isMainMemory() {
+	alert("Main memory also called primary storage is volatile memory that temporarily houses the processes and data necessary to run applications. ");
+}
+</script>
+{% endblock %}
